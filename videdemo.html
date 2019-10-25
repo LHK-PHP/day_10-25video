@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+		<style type="text/css">
+			/*把播放图标放到视频中心  这时需要定位,怎么定位? 子类相对于父类定位? 父类relative 子类absolute*/
+			/*广告定位*/
+			body{
+				text-align: center;
+			}
+			
+			#box{
+				border:1px solid red;
+				position: relative;
+				width: 800px;
+				margin: 0 auto;
+				overflow: hidden;
+			}
+			#btn{
+				position: absolute;
+				left: 50%;
+				top:50%;
+				margin-top: -32px;
+				margin-left: -32px;
+				display: none;
+				z-index: 99999;
+			}
+			#gg{
+				position: absolute;
+				width: 400px;
+				height: 300px;
+				top: 50%;
+				left: 50%;
+				margin-top: -150px;
+				margin-left: -200px;	
+			}
+	
+		#danmu{
+			position: absolute;
+			width:800px;
+			height: 400px;
+			top:0px;
+			left: 0px;
+			
+		}
+		</style>
+	</head>
+	<body>		
+		<div id="box">
+			<video id="v1" width="800" src="res/birds.mp4"></video>
+			<img id="btn" src="res/play.png"/>
+			<img id="gg" src="res/1.jpg" alt="" />	
+			
+			<div id="danmu"></div>
+		</div>
+		弹幕 <input type="text" name="msg" id="msg" value="" /> <button id="send">发送</button>
+		<script type="text/javascript">
+			var box = document.getElementById("box");
+			var btn = document.getElementById("btn");
+			var v1 = document.getElementById("v1");
+			var gg = document.getElementById("gg");
+			box.onmouseover=function(){
+				btn.style.display="block";	
+			}
+			box.onmouseout=function(){
+				btn.style.display="none";	
+			}
+			btn.onclick=function(){
+				if(v1.paused){
+					v1.play();
+					btn.src="res/pause.png";
+					gg.style.display="none";
+				}else{
+					v1.pause();
+					btn.src="res/play.png";
+					gg.style.display="block";
+				}	
+			}
+			
+			
+			var msg = document.getElementById("msg");
+			var sendbtn = document.getElementById("send");
+			var danmu = document.getElementById("danmu");
+			//点击发送按钮，获取输入框内容
+			sendbtn.onclick=function(){
+				var val = msg.value;
+				var span = document.createElement('span');
+				//把用户输入的内容添加到新创建的节点span里面
+				span.innerHTML=val;				
+				//节点拼接  添加到哪？				
+				danmu.appendChild(span);
+				// span标签相对于外面盒子定位  因为要滚动(向左移动)  不断减少left
+				//输入框清空
+				msg.value="";			
+				span.style.position="absolute";
+				//top随机数   不能超过弹幕框
+				//left值  不能小于弹幕框的宽度800
+				span.style.left='800px';
+				span.style.top=Math.floor(Math.random()*400)+'px'; 
+				
+				//设置字体大小范围  10-30
+				var min = 10;
+				var max = 20;
+				var size = min+Math.random()*max;
+				//设置css
+				span.style.fontSize= Math.floor(size)+'px';				
+				//颜色随机   
+				var r =Math.floor(Math.random()*256); 
+				var g =Math.floor(Math.random()*256); 
+				var b =Math.floor(Math.random()*256); 
+				var rgb ='('+r+','+g+','+b+')' 
+//				rag(25,23,12)
+				 console.log(rgb);
+				 span.style.color='rgb'+rgb;//rgb(10,21,36)				
+				// 强制不换行
+				span.style.whiteSpace='nowrap';
+				//滚动
+//				定时器 每个一定的时间   left值减少
+				var t = setInterval(function(){
+					if(parseInt(span.style.top)%2==0){
+						span.style.left=(parseInt(span.style.left)-1)+'px';
+					}else{
+						span.style.left=(parseInt(span.style.left)-2)+'px';
+					}
+					if(parseInt(span.style.left)==-20){
+						span.remove();
+						clearInterval(t);						
+					}
+					
+				},10)
+				
+				
+			}
+			
+			
+		</script>
+		
+		
+		<!--//要求
+		1，鼠标移到视频之上  按钮显示，移开按钮消失   操作div  不要操作video
+			onmouseenter   display:black
+			onmouseout      display none
+		2，点击开始按钮，视频播放，这是图标变成暂停按钮
+		图片onclick=function(){
+			if(是否暂停){
+			视频.播放
+			图标图片 切换  更改src
+			广告消失
+			}else{
+				视频.暂停
+			图标图片 切换  更改src
+			广告显示
+			}
+		}		
+		3，当点击暂停按钮的时候   视频暂停  图标变成开始按钮
+		4，广告  播放时广告消失   暂停时广告显示-->
+		
+		
+		<!--弹幕-->
+		<!--要求：
+			1，用户输入内容  ，点击发送按钮，发送弹幕内容
+			2，弹幕内容从右向左从视频框里滑过
+			3，从视频的最右边开始，滑到视频最左边消失
+			4，出现的弹幕内容高度不固定，颜色不固定，字体大小不固定，滚动速度不统一-->
+			
+			
+			
+		
+	</body>
+</html>
